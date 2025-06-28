@@ -22,7 +22,8 @@ jobs:
             context: .
             file: ./Dockerfile
             push: true
-            tags: ${{ github.sha }}
+            tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+
 
   Host-on-EC2:
     needs: Deploy-To-DockerHub
