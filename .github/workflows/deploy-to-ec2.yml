@@ -1,0 +1,17 @@
+name: CD Pipeline to deploy backend on EC2
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on: [push]
+
+jobs:
+  deployToDockerhub:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Hello world"
+
+  build:
+    needs: deployToDockerhub
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "This is working fine"
