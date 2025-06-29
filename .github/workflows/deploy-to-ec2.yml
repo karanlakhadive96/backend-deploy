@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   Deploy-To-DockerHub:
+    name: Push Image to Docker Hub Repository
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -26,8 +27,14 @@ jobs:
 
 
   Host-on-EC2:
+    name: Pull Image and host on EC2
     needs: Deploy-To-DockerHub
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "This is working fine"
+      - name: SSH into EC2
+        run: |
+          PRIVATE_KEY=${{ secrets.EC2_PRIVATE_KEY }}
+          echo "$PRIVATE_KEY" > ec2-machine.pem
+          ls
+          ssh -o StrictHostKeyChecking=no -i ec2-machine.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }}
+          whoami
