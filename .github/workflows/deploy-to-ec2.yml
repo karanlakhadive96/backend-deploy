@@ -39,9 +39,9 @@ jobs:
 
            docker network create backend-deploy-network
 
-           docker run -d --name mongodbcontainer --network backend-deploy-network -p 27017:27017 mongo
-           
+           docker run --name mongodbcontainer --network backend-deploy-network -p 27017:27017 mongo
+
            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
-           docker run -d --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+           docker run --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
 
           
