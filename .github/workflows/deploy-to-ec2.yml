@@ -39,5 +39,6 @@ jobs:
 
       - name: Host application on EC2
         run: |
+          sudo su
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
-          docker run -d -p 3000:3000 ${{ secrets.APP_NAME }}
+          docker run -d -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}
