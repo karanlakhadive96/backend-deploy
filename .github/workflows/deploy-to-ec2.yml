@@ -45,5 +45,6 @@ jobs:
            docker run -d --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
 
            docker images
+           docker ps
 
           
