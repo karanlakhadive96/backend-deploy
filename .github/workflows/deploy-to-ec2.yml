@@ -3,32 +3,32 @@ run-name: ${{ github.actor }} is testing out GitHub Actions
 on: [push]
 
 jobs:
-  # Deploy-To-DockerHub:
-  #   name: Push Image to Docker Hub Repository
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check out the repo
-  #       uses: actions/checkout@v4
+  Deploy-To-DockerHub:
+    name: Push Image to Docker Hub Repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
 
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-  #     - name: Build and push Docker image
-  #       id: push
-  #       uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-  #       with:
-  #           context: .
-  #           file: ./Dockerfile
-  #           push: true
-  #           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+            context: .
+            file: ./Dockerfile
+            push: true
+            tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
 
 
   Host-on-EC2:
     name: Pull Image and host on EC2
-    # needs: Deploy-To-DockerHub
+    needs: Deploy-To-DockerHub
     runs-on: ubuntu-latest
     steps:
       - name: SSH into EC2
@@ -36,4 +36,8 @@ jobs:
            echo "${{ secrets.EC2_PRIVATE_KEY }}" > ec2-machine.pem
            chmod 600 ec2-machine.pem
            ssh -o StrictHostKeyChecking=no -i ec2-machine.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }}
-           whoami
+
+      - name: Host application on EC2
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+          docker run -d -p 3000:3000 ${{ secrets.APP_NAME }}
