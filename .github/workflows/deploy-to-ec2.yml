@@ -1,5 +1,5 @@
 name: CD Pipeline to deploy backend on EC2
-run-name: ${{ github.actor }} is testing out GitHub Actions
+run-name: ${{ github.actor }} is hosting backend application on EC2
 on: [push]
 
 jobs:
