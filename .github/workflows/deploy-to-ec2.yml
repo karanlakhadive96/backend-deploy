@@ -24,7 +24,8 @@ jobs:
             file: ./Dockerfile
             push: true
             tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
-
+            build-args: |
+              MONGO_DB_URL=${{ secrets.DB_URL }}
 
   Host-on-EC2:
     name: Pull Image and host on EC2

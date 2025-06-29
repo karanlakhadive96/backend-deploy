@@ -1,4 +1,5 @@
 FROM node:alpine
+ARG MONGO_DB_URL
 
 WORKDIR /app
 
@@ -8,7 +9,7 @@ RUN npm install
 
 COPY . .
 
-ENV MONGO_DB_URL=mongodb://mongodbcontainer:27017/simpleapp
+ENV MONGO_DB_URL=${MONGO_DB_URL}
 
 ENTRYPOINT [ "node" ]
 

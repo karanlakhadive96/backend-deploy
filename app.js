@@ -36,6 +36,6 @@ app.post('/items', async (req, res) => {
   res.json({ message: 'Item saved', item: newItem });
 });
 
-app.listen(PORT,'0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
