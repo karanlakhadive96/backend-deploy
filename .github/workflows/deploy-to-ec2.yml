@@ -37,10 +37,10 @@ jobs:
           chmod 600 ec2-machine.pem
           sudo su
           ssh -o StrictHostKeyChecking=no -i ec2-machine.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }} &&
-            docker network create backend-deploy-network || true &&
-            docker run -d --network backend-deploy-network -p 27017:27017 --name mongodbcontainer mongo &&
-            docker run -d --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }} &&
+            sudo docker network create backend-deploy-network || true &&
+            sudo docker run -d --network backend-deploy-network -p 27017:27017 --name mongodbcontainer mongo &&
+            sudo docker run -d --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
           "
 
           
