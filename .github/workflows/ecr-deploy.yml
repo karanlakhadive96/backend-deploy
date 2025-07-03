@@ -1,0 +1,12 @@
+name: Pushing Docker image to ECR
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  Pushing-Docker-Image-To-ECR:
+    name: Action to Push Image to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+      - run: docker run mongo
