@@ -1,5 +1,4 @@
-FROM node:alpine
-ARG MONGO_DB_URL
+FROM node AS build-stage
 
 WORKDIR /app
 
@@ -9,7 +8,13 @@ RUN npm install
 
 COPY . .
 
-ENV MONGO_DB_URL=${MONGO_DB_URL}
+####### Final Image #######
+
+FROM node:alpine
+
+WORKDIR /app
+
+COPY --from=build-stage /app /app
 
 ENTRYPOINT [ "node" ]
 

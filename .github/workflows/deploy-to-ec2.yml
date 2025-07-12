@@ -1,47 +1,47 @@
-name: CD Pipeline to deploy backend on EC2
-run-name: ${{ github.actor }} is hosting backend application on EC2
-on: [push]
+# name: CD Pipeline to deploy backend on EC2
+# run-name: ${{ github.actor }} is hosting backend application on EC2
+# on: [push]
 
-jobs:
-  Deploy-To-DockerHub:
-    name: Push Image to Docker Hub Repository
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
+# jobs:
+#   Deploy-To-DockerHub:
+#     name: Push Image to Docker Hub Repository
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out the repo
+#         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+#       - name: Log in to Docker Hub
+#         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
-            build-args: |
-              MONGO_DB_URL=${{ secrets.DB_URL }}
+#       - name: Build and push Docker image
+#         id: push
+#         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+#         with:
+#             context: .
+#             file: ./Dockerfile
+#             push: true
+#             tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+#             build-args: |
+#               MONGO_DB_URL=${{ secrets.DB_URL }}
 
-  Host-on-EC2:
-    name: Pull Image and host on EC2
-    needs: Deploy-To-DockerHub
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy and run on EC2
-        run: |
-          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ec2-machine.pem
-          chmod 600 ec2-machine.pem
-          sudo su
-          ssh -o StrictHostKeyChecking=no -i ec2-machine.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }} &&
-            sudo docker network create backend-deploy-network || true &&
-            sudo docker run -d --network backend-deploy-network -p 27017:27017 --name mongodbcontainer mongo &&
-            sudo docker run -d --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
-          "
+#   Host-on-EC2:
+#     name: Pull Image and host on EC2
+#     needs: Deploy-To-DockerHub
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Deploy and run on EC2
+#         run: |
+#           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ec2-machine.pem
+#           chmod 600 ec2-machine.pem
+#           sudo su
+#           ssh -o StrictHostKeyChecking=no -i ec2-machine.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "
+#             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }} &&
+#             sudo docker network create backend-deploy-network || true &&
+#             sudo docker run -d --network backend-deploy-network -p 27017:27017 --name mongodbcontainer mongo &&
+#             sudo docker run -d --network backend-deploy-network -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ github.sha }}
+#           "
 
           
